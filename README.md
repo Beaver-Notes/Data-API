@@ -8,106 +8,156 @@ The Following documentation is related on how to use said API if you are looking
 ### Base URL
 `http://localhost:3000`
 
-### Authentication
+## 1. Auth
 
-#### Request Authentication
+### 1.1 Request Authentication
 
-**Endpoint:** `POST /request-auth`
+**Endpoint**
 
-**Description:** Sends an authentication request to the renderer process in Electron.
+`POST /request-auth`
 
-**Request:**
-- **Headers:** `Content-Type: application/json`
-- **Body:**
-  ```json
-  {
-    "platform": "your-platform",
-    "id": "your-id"
-  }
-  ```
+**Request Body**
 
-**Example `curl` Command:**
-```bash
+```json
+{
+  "id": "Your ID",
+  "platform": "Platform",
+  "auth": ["note:add", "note:delete", "label:add"]
+}
+```
+
+**Curl Example**
+
+```sh
 curl --location 'http://localhost:3000/request-auth' \
 --header 'Content-Type: application/json' \
 --data '{
-    "platform": "your-platform",
-    "id": "your-id"
+    "id": "Your ID",
+    "platform": "Platform",
+    "auth": ["note:add", "note:delete", "label:add"]
 }'
 ```
 
-#### Verify Authentication
+**Response**
 
-**Endpoint:** `GET /confirm-auth`
+Success: request sent!
 
-**Description:** Verifies the authentication token.
+:::info
+Remember that the user will ultimately be in charge of choosing what the app can and cannot do, so make sure to handle cases where one of the 3 auth options is not available.
+:::
 
-**Request:**
-- **Headers:**
-  - `Authorization: Bearer your-token`
-  - `Content-Type: application/json`
+### 1.2 Confirm Authentication
 
-**Example `curl` Command:**
-```bash
+**Endpoint**
+
+`GET /confirm-auth`
+
+**Request Body**
+
+```json
+{
+  "id": "Your ID",
+  "platform": "Platform"
+}
+```
+
+**Curl Example**
+
+```sh
 curl --location --request GET 'http://localhost:3000/confirm-auth' \
 --header 'Authorization: Bearer your-token' \
 --header 'Content-Type: application/json' \
 --data '{
-    "platform": "your-platform",
-    "id": "your-id"
-}' 
+    "platform": "Platform",
+    "id": "Your ID"
+}'
 ```
 
-### Notes Management
+**Response**
 
-#### Add Note
+Success: passed
 
-**Endpoint:** `POST /add-note`
+## 2. Create a New Note
 
-**Description:** Adds a new note and broadcasts it to all connected clients.
+**Endpoint**
 
-**Request:**
-- **Headers:**
-  - `Authorization: Bearer your-token`
-  - `Content-Type: application/json`
-- **Body:**
-  ```json
-  {
-    "title": "Sample Note",
-    "content": "This is a sample note content."
-  }
-  ```
+`POST /add-note`
 
-**Example `curl` Command:**
-```bash
+**Request Body**
+
+```json
+{
+  "id": "note.id",
+  "title": "Your Title",
+  "content": {
+    "type": "doc",
+    "content": [
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "This is a sample note content."
+          }
+        ]
+      }
+    ]
+  },
+  "labels": [],
+  "isBookmarked": false,
+  "isArchived": false
+}
+```
+
+**Curl Example**
+
+```sh
 curl --location 'http://localhost:3000/add-note' \
 --header 'Authorization: Bearer your-token' \
 --header 'Content-Type: application/json' \
 --data '{
+    "id": "test1",
     "title": "Sample Note",
-    "content": "This is a sample note content."
+    "content": {
+        "type": "doc",
+        "content": [
+            {
+                "type": "paragraph",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "This is a sample note content."
+                    }
+                ]
+            }
+        ]
+    },
+    "isBookmarked": false,
+    "isArchived": false
 }'
 ```
 
-#### Delete Note
+**Response**
 
-**Endpoint:** `POST /delete-note`
+Success: Creating Note
 
-**Description:** Deletes a note and broadcasts the deletion to all connected clients.
+## 3. Delete a Note
 
-**Request:**
-- **Headers:**
-  - `Authorization: Bearer your-token`
-  - `Content-Type: application/json`
-- **Body:**
-  ```json
-  {
-    "id": "note-id"
-  }
-  ```
+**Endpoint**
 
-**Example `curl` Command:**
-```bash
+`POST /delete-note`
+
+**Request Body**
+
+```json
+{
+  "id": "note-id"
+}
+```
+
+**Curl Example**
+
+```sh
 curl --location 'http://localhost:3000/delete-note' \
 --header 'Authorization: Bearer your-token' \
 --header 'Content-Type: application/json' \
@@ -116,32 +166,37 @@ curl --location 'http://localhost:3000/delete-note' \
 }'
 ```
 
-#### Add Label to Note
+**Response**
 
-**Endpoint:** `POST /add-label`
+Success: Deleting Note
 
-**Description:** Adds a label to a note and broadcasts the update to all connected clients.
+## 4. Add a Label
 
-**Request:**
-- **Headers:**
-  - `Authorization: Bearer your-token`
-  - `Content-Type: application/json`
-- **Body:**
-  ```json
-  {
-    "id": "note-id",
-    "labelId": "label-id"
-  }
-  ```
+**Endpoint**
 
-**Example `curl` Command:**
-```bash
+`POST /add-label`
+
+**Request Body**
+
+```json
+{
+  "id": "note-id",
+  "labelId": "label-content"
+}
+```
+
+**Curl Example**
+
+```sh
 curl --location 'http://localhost:3000/add-label' \
 --header 'Authorization: Bearer your-token' \
 --header 'Content-Type: application/json' \
 --data '{
     "id": "note-id",
-    "labelId": "label-id"
+    "labelId": "label-content"
 }'
 ```
 
+**Response**
+
+Success: Adding Label
